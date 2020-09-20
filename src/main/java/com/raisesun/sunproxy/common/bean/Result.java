@@ -12,11 +12,6 @@ public class Result<T> implements Serializable {
     private String message;
     private T data;
 
-    @Tolerate
-    public <T>Result() {
-
-    }
-
     public Result(Integer code, String message) {
         this.code = code;
         this.message = message;

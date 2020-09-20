@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 @RestController
 @RequestMapping("proxy")
@@ -54,7 +57,7 @@ public class ProxyController {
     }
 
     @GetMapping("getAll")
-    public Result getAll() {
+    public Result<Queue<ProxyInfo>> getAll() {
         Queue<ProxyInfo> proxyQueue = proxyService.getAll();
         return Result.success(proxyQueue);
     }

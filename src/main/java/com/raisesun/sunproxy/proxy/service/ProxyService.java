@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Slf4j
 @Service
@@ -29,7 +31,7 @@ public class ProxyService {
     @Value("${sys.proxy.maxProxyNum}")
     private int maxProxyNum;
 
-    private Queue<ProxyInfo> cacheList;
+    private BlockingQueue<ProxyInfo> cacheList;
 
     static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -105,14 +107,15 @@ public class ProxyService {
     }
 
     public Queue<ProxyInfo> getAll() {
-        Queue<ProxyInfo> proxyQueue = cacheList;
+        BlockingQueue<ProxyInfo> proxyQueue = this.cacheList;
         return proxyQueue;
     }
 
     @PostConstruct
     private void init() {
         if(this.cacheList == null) {
-            this.cacheList = new LinkedList<>();
+            this.cacheList = new LinkedBlockingQueue<ProxyInfo>() {
+            };
         }
     }
 }
