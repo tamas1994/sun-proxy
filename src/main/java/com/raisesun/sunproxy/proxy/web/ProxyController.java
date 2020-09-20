@@ -1,10 +1,12 @@
 package com.raisesun.sunproxy.proxy.web;
 
 import com.raisesun.sunproxy.common.bean.Result;
+import com.raisesun.sunproxy.common.util.TimeUtil;
 import com.raisesun.sunproxy.proxy.bean.request.PickRequest;
 import com.raisesun.sunproxy.proxy.enity.ProxyInfo;
 import com.raisesun.sunproxy.proxy.service.ProxyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Queue;
@@ -29,6 +31,12 @@ public class ProxyController {
                       @RequestParam(value = "lb", defaultValue = "1") int lb,
                       @RequestParam(value = "pb", defaultValue = "4") int pb,
                       @RequestParam(value = "regions", defaultValue = "") String regions) {
+
+        Queue<ProxyInfo> cacheProxy = proxyService.getAll();
+        if(CollectionUtils.isEmpty(cacheProxy)) {
+            // 如果代理池缓存为空，则延时1到3秒再请求
+            TimeUtil.delayerRandomMPlusN(1000l, 2000l);
+        }
 
         PickRequest request = PickRequest.builder()
                 .num(num).type(type).pack(pack).port(port).pro(pro).city(city)
