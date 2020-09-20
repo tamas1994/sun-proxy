@@ -1,0 +1,7 @@
+server:
+  port: 4000
+  servlet:
+    context-path: /sun-proxy
+sys:
+  proxy:
+    maxProxyNum: 50
