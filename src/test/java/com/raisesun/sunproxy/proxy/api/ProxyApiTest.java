@@ -16,24 +16,5 @@ public class ProxyApiTest {
     @Autowired
     ProxyApi proxyApi;
 
-    @Test
-    public void testPickIp() {
 
-        PickRequest request = PickRequest.builder()
-                .num(1)
-                .type(2)
-                .pack(42084)
-                .port(1)
-                .city(350500)
-                .pro(350000)
-                .ts(1)
-                .ys(1)
-                .cs(1)
-                .lb(1)
-                .pb(1)
-                .regions("")
-                .build();
-        PickIpResult result = proxyApi.pickIp(request);
-        log.info("result:{}", new Gson().toJson(result));
-    }
 }

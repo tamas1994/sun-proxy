@@ -15,36 +15,36 @@ public class PickRequest {
     /**
      * 获取代理数量
      */
-    private Integer num;
+    private String num;
 
 
-    private Integer type;
+    private String type;
 
     /**
      * 套餐包
      */
-    private Integer pack;
+    private String pack;
 
     /**
      * 端口赖兴
      */
-    private Integer port;
+    private String port;
 
     /**
      * 代理城市
      */
-    private Integer city;
+    private String city;
 
     /**
      * 代理省份
      */
-    private Integer pro;
+    private String pro;
 
-    private Integer ts;
-    private Integer ys;
-    private Integer cs;
-    private Integer lb;
-    private Integer pb;
+    private String ts;
+    private String ys;
+    private String cs;
+    private String lb;
+    private String pb;
     private String regions;
 
     @Tolerate

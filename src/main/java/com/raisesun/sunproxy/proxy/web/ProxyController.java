@@ -22,17 +22,17 @@ public class ProxyController {
     ProxyService proxyService;
 
     @PostMapping("get")
-    public Result get(@RequestParam(value = "num", defaultValue = "10") int num,
-                      @RequestParam(value = "type", defaultValue = "2") int type,
-                      @RequestParam(value = "pack", defaultValue = "42084") int pack,
-                      @RequestParam(value = "port", defaultValue = "1") int port,
-                      @RequestParam(value = "pro", defaultValue = "350000") int pro,
-                      @RequestParam(value = "city", defaultValue = "350600") int city,
-                      @RequestParam(value = "ts", defaultValue = "1") int ts,
-                      @RequestParam(value = "ys", defaultValue = "1") int ys,
-                      @RequestParam(value = "cs", defaultValue = "1") int cs,
-                      @RequestParam(value = "lb", defaultValue = "1") int lb,
-                      @RequestParam(value = "pb", defaultValue = "4") int pb,
+    public Result get(@RequestParam(value = "num", defaultValue = "10") String num,
+                      @RequestParam(value = "type", defaultValue = "2") String type,
+                      @RequestParam(value = "pack", defaultValue = "42084") String pack,
+                      @RequestParam(value = "port", defaultValue = "1") String port,
+                      @RequestParam(value = "pro", defaultValue = "") String pro,
+                      @RequestParam(value = "city", defaultValue = "") String city,
+                      @RequestParam(value = "ts", defaultValue = "1") String ts,
+                      @RequestParam(value = "ys", defaultValue = "1") String ys,
+                      @RequestParam(value = "cs", defaultValue = "1") String cs,
+                      @RequestParam(value = "lb", defaultValue = "1") String lb,
+                      @RequestParam(value = "pb", defaultValue = "4") String pb,
                       @RequestParam(value = "regions", defaultValue = "") String regions) {
 
         Queue<ProxyInfo> cacheProxy = proxyService.getAll();
