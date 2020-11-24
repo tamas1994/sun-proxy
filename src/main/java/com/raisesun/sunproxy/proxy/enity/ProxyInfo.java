@@ -12,6 +12,7 @@ public class ProxyInfo {
     private String port;
     private String city;
     private long expireTime;
+    private long pullTime;
 
     @Tolerate
     public ProxyInfo() {

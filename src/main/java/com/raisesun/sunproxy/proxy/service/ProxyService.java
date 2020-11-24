@@ -37,8 +37,13 @@ public class ProxyService {
 
     public Result pickIps(PickRequest pickRequest) {
 
+        int errTimes = 0;
         ProxyInfo proxyInfo = null;
         while (proxyInfo == null) {
+            errTimes ++;
+            if(errTimes > 50) {
+                return Result.failure(-1, "重试超过50次");
+            }
             Result<ProxyInfo> result = getProxy(pickRequest);
             if(result.getCode().equals(ResultCode.SUCCESS.code())) {
                 proxyInfo = result.getData();
@@ -49,6 +54,10 @@ public class ProxyService {
             if(result.getCode().equals(ResultCode.PROXY_API_ERROR.code())) {
                 log.info(new Gson().toJson(result));
                 return result;
+            }
+
+            if(result.getCode().intValue() == 113) {
+                return Result.failure(result.getCode(), result.getMessage());
             }
 
             if(result.getCode().equals(ResultCode.CACHE_IS_NULL.code())) {
@@ -75,8 +84,12 @@ public class ProxyService {
         ProxyInfo proxyInfo = this.cacheList.poll();
         if(proxyInfo == null) {
             PickIpResult pickIpResult = proxyApi.pickIp(pickRequest);
+            if(pickIpResult == null) {
+                return Result.failure(ResultCode.PROXY_API_ERROR);
+            }
+
             if(!pickIpResult.getCode().equals(ResultCode.SUCCESS.code())) {
-                return Result.failure(ResultCode.PROXY_API_ERROR.code(), pickIpResult.getMsg());
+                return Result.failure(pickIpResult.getCode(), pickIpResult.getMsg());
             }
 
             List<PickIpResult.Ip> proxyList = pickIpResult.getData();
@@ -88,27 +101,42 @@ public class ProxyService {
                         .port(item.getPort())
                         .city(item.getCity())
                         .expireTime(expireTime)
+                        .pullTime(System.currentTimeMillis())
                         .build();
                 this.cacheList.offer(proxyItem);
             }
             return Result.failure(ResultCode.CACHE_IS_NULL);
         }
 
-        long currentTime = System.currentTimeMillis();
-        if(proxyInfo.getExpireTime() < currentTime) {
-            return Result.failure(ResultCode.PROXY_HAS_EXPIRED);
-        }
-
-        return Result.success(proxyInfo);
+        return isExpired(proxyInfo) ? Result.failure(ResultCode.PROXY_HAS_EXPIRED) :  Result.success(proxyInfo);
     }
 
     public void recycle(ProxyInfo proxyInfo) {
+        // 如果已经过期，则不再回收
+        if(isExpired(proxyInfo)) {
+            return;
+        }
         this.cacheList.offer(proxyInfo);
     }
 
     public Queue<ProxyInfo> getAll() {
         BlockingQueue<ProxyInfo> proxyQueue = this.cacheList;
         return proxyQueue;
+    }
+
+    public boolean isExpired(ProxyInfo proxyInfo) {
+        long pullTIme = proxyInfo.getPullTime();
+        long expiredTime = proxyInfo.getExpireTime();
+        long currentTime = System.currentTimeMillis();
+        if(expiredTime < currentTime) {
+            return true;
+        }
+
+        if(currentTime - pullTIme > 1000 * 60 * 30) {
+            return true;
+        }
+
+        return false;
     }
 
     @PostConstruct
